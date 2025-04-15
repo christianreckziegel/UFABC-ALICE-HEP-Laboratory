@@ -5,8 +5,6 @@ This repository contains various High-Energy Physics (HEP) projects developed by
 ## Projects
 
 - **[Logistic Classifier for Jet Identification](Project-1-Logistic-Classifier)**: A logistic regression model using the OvR approach for classifying jets from ALICE data.
-- **[Neural Network for HEP Data](Project-2-NeuralNetwork)**: A deep learning model for event classification in HEP experiments.
-- **[Feature Engineering for ALICE Data](Project-3-Feature-Engineering)**: Methods for preprocessing and selecting features from raw ALICE data.
 
 ## Getting Started
 
