@@ -25,24 +25,26 @@ The `LogisticModel` class is a simple logistic regression model that can be trai
 ```cpp
 class LogisticModel {
 public:
-    LogisticModel(int n_features);
-    
+    LogisticModel(int nFeatures);
+
+    double sigmoid(double z) const;
+
+    double predict(const std::vector<double>& x) const;
+
     void train(const std::vector<std::vector<double>>& X,
-               const std::vector<int>& y,
-               double learning_rate = 0.01,
-               int epochs = 1000);
+               const std::vector<double>& Y,
+               int maxIter = 1000,
+               double lr = 0.01);
 
-    int predict(const std::vector<double>& x) const;
-    double predict_proba(const std::vector<double>& x) const;
+    void save(const char* filename) const;
+    void load(const char* filename);
 
-    void save(const std::string& filename) const;
-    void load(const std::string& filename);
+    void exportToText(const char* filename) const;
 
-    void print_weights() const;
+    TVectorD getWeights() const;
 
 private:
-    std::vector<double> weights;
-    double bias;
+    TVectorD weights;
 };
 ```
 
