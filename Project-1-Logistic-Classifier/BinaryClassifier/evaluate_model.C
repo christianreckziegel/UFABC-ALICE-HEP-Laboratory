@@ -14,7 +14,7 @@
 #include <iostream>
 #include "logistic_model.h"  // Ensure you include the model header
 
-void plotROC(std::vector<int>& trueLabels, std::vector<float>& predictedScores) {
+TCanvas* plotROC(std::vector<int>& trueLabels, std::vector<float>& predictedScores) {
     int n = trueLabels.size();
     std::vector<float> fpr, tpr;  // false positive rate, true positive rate
     int pos = 0, neg = 0;
@@ -25,7 +25,10 @@ void plotROC(std::vector<int>& trueLabels, std::vector<float>& predictedScores) 
     }
 
     // Threshold values
-    std::vector<float> thresholds = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+    std::vector<float> thresholds;
+    for (int i = 0; i <= 100; ++i) {
+        thresholds.push_back(i / 100.0);
+    }
     for (auto& threshold : thresholds) {
         float tp = 0, fp = 0, fn = 0, tn = 0;
         for (int i = 0; i < n; ++i) {
@@ -39,13 +42,16 @@ void plotROC(std::vector<int>& trueLabels, std::vector<float>& predictedScores) 
         }
 
         // Calculate true positive rate (sensitivity) and false positive rate (1-specificity)
-        fpr.push_back(fp / float(fp + tn));
-        tpr.push_back(tp / float(tp + fn));
+        float fprValue = (fp + tn) > 0 ? fp / (fp + tn) : 0;
+        float tprValue = (tp + fn) > 0 ? tp / (tp + fn) : 0;
+        fpr.push_back(fprValue);
+        tpr.push_back(tprValue);
+
     }
 
     // Create and draw ROC curve
     TGraph* rocGraph = new TGraph(fpr.size(), &fpr[0], &tpr[0]);
-    TCanvas* c = new TCanvas("rocCanvas", "ROC Curve", 800, 600);
+    TCanvas* cROC = new TCanvas("rocCanvas", "ROC Curve", 800, 600);
     rocGraph->SetTitle("ROC Curve;False Positive Rate;True Positive Rate");
     rocGraph->SetLineColor(kBlue);
     rocGraph->SetLineWidth(2);
@@ -57,6 +63,8 @@ void plotROC(std::vector<int>& trueLabels, std::vector<float>& predictedScores) 
     diagGraph->SetPoint(1, 1, 1);
     diagGraph->SetLineColor(kRed);
     diagGraph->Draw("L");
+
+    return cROC;
 }
 
 void evaluateModel(const char* filename) {
@@ -99,7 +107,7 @@ void evaluateModel(const char* filename) {
     }
 
     // Call ROC plotting function
-    plotROC(trueLabels, predictedScores);
+    TCanvas* cROC = plotROC(trueLabels, predictedScores);
 
     // Optionally, print other metrics (accuracy, precision, recall)
     // Implement accuracy, precision, recall, etc., as needed
@@ -221,7 +229,13 @@ void evaluateModel(const char* filename) {
     lossGraph->SetLineColor(kRed);
     lossGraph->Draw("AL");
 
-
+    // Save all canvases to a single pdf file
+    cROC->Print("LogisticRegressionDiagonosis.pdf(");
+    cHist->Print("LogisticRegressionDiagonosis.pdf");
+    cScatter->Print("LogisticRegressionDiagonosis.pdf");
+    cAccuracy->Print("LogisticRegressionDiagonosis.pdf");
+    cPR->Print("LogisticRegressionDiagonosis.pdf");
+    cLoss->Print("LogisticRegressionDiagonosis.pdf)");
 }
 
 void evaluate_model() {

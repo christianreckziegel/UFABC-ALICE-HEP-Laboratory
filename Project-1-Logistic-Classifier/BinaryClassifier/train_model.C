@@ -8,7 +8,12 @@
 #include <iostream>
 
 // Function to train the logistic regression model
-void train_model(int nSamples = 500, int nFeatures = 4, int maxIter = 1000, double lr = 0.01) {
+void train_model(int nSamples = 500, int nFeatures = 4, int maxIter = 1000000, double lr = 0.1) {
+
+    // Execution time calculation
+    time_t start, end;
+    time(&start); // initial instant of program execution
+
     // Create random number generator
     TRandom3 rand(42);
 
@@ -47,5 +52,12 @@ void train_model(int nSamples = 500, int nFeatures = 4, int maxIter = 1000, doub
 
     // Output a message confirming model training and saving
     std::cout << "Trained and saved model with " << nFeatures << " features.\n";
+
+    time(&end); // end instant of program execution
+    // Calculating total time taken by the program. 
+    double time_taken = double(end - start); 
+    cout << "Time taken by program is : " << fixed 
+         << time_taken/60 << setprecision(5); 
+    cout << " min " << endl;
 }
 
